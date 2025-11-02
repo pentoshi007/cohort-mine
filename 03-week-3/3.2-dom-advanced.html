@@ -1,0 +1,46 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <input type="text" id="input" placeholder="Enter a todo" />
+    <button id="button" onclick="addTodo()">Add</button>
+    <div id="todos"></div>
+    <script>
+      const input = document.getElementById("input");
+      let todoIndex = 0;
+      function addTodo() {
+        // const value = input.value;
+        // if (value.trim() === "") return;
+        // const newTodoElement = document.createElement("div");
+        // const currentIndex = todoIndex++;
+        // newTodoElement.innerHTML = `<div>${value} <button onclick="deleteTodo(${currentIndex})">Delete</button></div>`;
+        // newTodoElement.id = `todo-${currentIndex}`;
+        // document.querySelector("#todos").appendChild(newTodoElement);
+        // input.value = "";
+        //===other way to do it
+        const value = input.value;
+        if (value.trim() === "") return;
+        const spanElement = document.createElement("span");
+        const buttonElement = document.createElement("button");
+        spanElement.textContent = value;
+        buttonElement.textContent = "Delete";
+        buttonElement.onclick = () => deleteTodo(todoIndex);
+        const divElement = document.createElement("div");
+        divElement.appendChild(spanElement);
+        divElement.appendChild(buttonElement);
+        divElement.id = `todo-${todoIndex}`;
+        document.querySelector("#todos").appendChild(divElement);
+      }
+
+      function deleteTodo(index) {
+        const element = document.getElementById(`todo-${index}`);
+        if (element) {
+          element.parentNode.removeChild(element);
+        }
+      }
+    </script>
+  </body>
+</html>
