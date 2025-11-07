@@ -9,5 +9,16 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs"
+  "type": "commonjs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pentoshi007/cohort-mine.git"
+  },
+  "bugs": {
+    "url": "https://github.com/pentoshi007/cohort-mine/issues"
+  },
+  "homepage": "https://github.com/pentoshi007/cohort-mine#readme",
+  "dependencies": {
+    "commander": "^14.0.2"
+  }
 }
