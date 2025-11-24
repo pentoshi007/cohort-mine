@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Authentication</title>
+  </head>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    async function signup(event) {
+      event.preventDefault(); // Prevent form submission
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+      try {
+        const response = await axios.post("http://localhost:3000/signup", {
+          username,
+          password,
+        });
+        alert(response.data.message);
+      } catch (error) {
+        alert(error.response?.data?.message || error.message);
+      }
+    }
+    async function signin(event) {
+      event.preventDefault(); // Prevent form submission
+      const username = document.getElementById("signin-username").value;
+      const password = document.getElementById("signin-password").value;
+      try {
+        const response = await axios.post("http://localhost:3000/signin", {
+          username,
+          password,
+        });
+        alert(response.data.message);
+        localStorage.setItem("token", response.data.token);
+      } catch (error) {
+        alert(error.response?.data?.message || error.message);
+      }
+    }
+    async function getUserInfo(event) {
+      if (event) event.preventDefault(); // Prevent form submission if called from button
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          document.getElementById("user-info").innerHTML = "No token found";
+          return;
+        }
+        const response = await axios.get("http://localhost:3000/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        document.getElementById("user-info").innerHTML = response.data.username;
+      } catch (error) {
+        document.getElementById("user-info").innerHTML =
+          error.response?.data?.message || error.message;
+      }
+    }
+    async function logout(event) {
+      try {
+        localStorage.removeItem("token");
+        document.getElementById("user-info").innerHTML = "Logged out";
+        alert("Logged out successfully");
+      } catch (error) {
+        alert(error.message);
+      }
+    }
+  </script>
+
+  <body>
+    <h1>Authentication</h1>
+    <form id="signup-form">
+      <input type="text" id="username" placeholder="Username" />
+      <input type="password" id="password" placeholder="Password" />
+      <button onclick="signup(event)">Sign Up</button>
+    </form>
+    <form id="signin-form">
+      <input
+        type="text"
+        id="signin-username"
+        name="username"
+        placeholder="Username"
+      />
+      <input
+        type="password"
+        id="signin-password"
+        name="password"
+        placeholder="Password"
+      />
+      <button onclick="signin(event)">Sign In</button>
+    </form>
+    <div>User info: <span id="user-info"></span></div>
+    <script>
+      // Automatically fetch user info on page load if token exists
+      window.addEventListener("DOMContentLoaded", () => {
+        if (localStorage.getItem("token")) {
+          getUserInfo();
+        }
+      });
+    </script>
+
+    <div>
+      <button onclick="logout(event)">Logout</button>
+    </div>
+  </body>
+</html>
