@@ -87,8 +87,8 @@ flowchart LR
         C2 --> D2["Minimal DOM Updates"]
     end
     
-    style C1 fill:#ffcdd2
-    style D2 fill:#c8e6c9
+    style C1 fill:#ffcdd2,color:#333
+    style D2 fill:#c8e6c9,color:#333
 ```
 
 **Why it matters:**
@@ -111,7 +111,7 @@ flowchart TD
     F --> G
     G --> H["Batch Updates to Real DOM"]
     
-    style H fill:#c8e6c9
+    style H fill:#c8e6c9,color:#333
 ```
 
 **Two Key Assumptions React Makes:**
@@ -136,8 +136,8 @@ flowchart TD
     A -->|"Props flow DOWN"| B
     C -->|"Events bubble UP"| A
     
-    style A fill:#e3f2fd
-    style B fill:#f3e5f5
+    style A fill:#e3f2fd,color:#333
+    style B fill:#f3e5f5,color:#333
 ```
 
 **Benefits:**
@@ -162,8 +162,8 @@ flowchart TD
         F --> I["Post"]
     end
     
-    style A fill:#bbdefb
-    style F fill:#c8e6c9
+    style A fill:#bbdefb,color:#333
+    style F fill:#c8e6c9,color:#333
 ```
 
 **Component Characteristics:**
@@ -225,9 +225,9 @@ flowchart TD
         F --> G[Child Components]
     end
     
-    style A fill:#e1f5fe
-    style F fill:#c8e6c9
-    style E fill:#fff3e0
+    style A fill:#e1f5fe,color:#333
+    style F fill:#c8e6c9,color:#333
+    style E fill:#fff3e0,color:#333
 ```
 
 ### How React Apps Bootstrap
@@ -269,8 +269,8 @@ flowchart LR
     D["Props IN"] --> A
     E["State Changes"] --> A
     
-    style A fill:#bbdefb
-    style C fill:#c8e6c9
+    style A fill:#bbdefb,color:#333
+    style C fill:#c8e6c9,color:#333
 ```
 
 ### JSX Fundamentals
@@ -312,8 +312,8 @@ flowchart TD
     
     Parent -->|"Props Flow Down"| Child
     
-    style Parent fill:#e3f2fd
-    style Child fill:#f3e5f5
+    style Parent fill:#e3f2fd,color:#333
+    style Child fill:#f3e5f5,color:#333
 ```
 
 #### The Special `children` Prop
@@ -355,8 +355,8 @@ flowchart LR
     D -->|"Call with new value"| E["Triggers Re-render"]
     E --> A
     
-    style A fill:#bbdefb
-    style E fill:#ffcdd2
+    style A fill:#bbdefb,color:#333
+    style E fill:#ffcdd2,color:#333
 ```
 
 #### Syntax Patterns
@@ -410,9 +410,9 @@ flowchart TD
         H["Component Unmounts"] --> I["Run Cleanup"]
     end
     
-    style C fill:#fff3e0
-    style E fill:#ffcdd2
-    style F fill:#c8e6c9
+    style C fill:#fff3e0,color:#333
+    style E fill:#ffcdd2,color:#333
+    style F fill:#c8e6c9,color:#333
 ```
 
 #### The Three Forms of useEffect
@@ -474,8 +474,8 @@ flowchart TD
         F -->|"Throws Error"| G["💥 Entire App Crashes"]
     end
     
-    style D fill:#c8e6c9
-    style G fill:#ffcdd2
+    style D fill:#c8e6c9,color:#333
+    style G fill:#ffcdd2,color:#333
 ```
 
 ### What Errors ARE Caught
@@ -559,8 +559,8 @@ flowchart LR
         E --> F["✅ Efficient Updates"]
     end
     
-    style C fill:#ffcdd2
-    style F fill:#c8e6c9
+    style C fill:#ffcdd2,color:#333
+    style F fill:#c8e6c9,color:#333
 ```
 
 ### Key Rules
@@ -664,9 +664,9 @@ flowchart TD
     C --> D
     G --> D
     
-    style A fill:#e8f5e9
-    style E fill:#fff3e0
-    style I fill:#ffebee
+    style A fill:#e8f5e9,color:#333
+    style E fill:#fff3e0,color:#333
+    style I fill:#ffebee,color:#333
 ```
 
 ---
@@ -762,8 +762,8 @@ flowchart LR
     C --> D["Minimal DOM Updates"]
     D --> E["UI Updated"]
     
-    style A fill:#ffecb3
-    style E fill:#c8e6c9
+    style A fill:#ffecb3,color:#333
+    style E fill:#c8e6c9,color:#333
 ```
 
 ### Quick Reference Card
@@ -802,4 +802,4 @@ flowchart LR
 
 ---
 
-*Last updated: December 2024*
+*Last updated: December 2025*
