@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nAdd Week 5: Advanced Express.js, Modern JavaScript & HTTP APIs\n\n- Comprehensive README.md covering all Week 5 concepts\n- HTTP Headers and query parameters\n- Express middlewares (application, route-level, error handling)\n- CORS configuration and implementation\n- Arrow functions and ''this'' binding\n- Array methods: map, filter, reduce with examples\n- Axios vs Fetch API comparison\n- Code examples, diagrams, and best practices\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []

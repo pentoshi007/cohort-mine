@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nAdd Week 6: Authentication Deep Dive & HTTP Security\n\nComprehensive guide covering JWT-based authentication and secure\nfrontend-backend communication with multiple authentication methods.\n\nContents:\n- Complete authentication implementations (Cookie, Bearer, Custom Headers)\n- JWT creation, verification, and token management\n- Frontend integration examples (Fetch API, Axios, HTML)\n- Security best practices (XSS, CSRF, httpOnly cookies)\n- CORS configuration and cross-origin authentication\n- Detailed comparison of authentication methods\n- Real-world examples with React and vanilla JavaScript\n- Complete working HTML frontend application\n- Extensive README with diagrams, code examples, and guides\n\nFiles included:\n- 6.1-http-deepdive.js: Universal auth middleware with all methods\n- 6.2-auth-FEtoBEconnection.js: Simple backend with CORS\n- 6.3-auth-recap.js: JWT notes and key concepts\n- client-examples.js: Comprehensive client-side examples\n- public/index.html: Complete working frontend app\n- README.md: Detailed guide with Mermaid diagrams and examples\n\n🤖 Generated with Claude Code (https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []
