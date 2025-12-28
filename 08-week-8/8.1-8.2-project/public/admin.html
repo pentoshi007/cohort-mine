@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Course Selling App</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="container nav-wrapper">
+            <a href="/" class="logo">CourseApp <span style="font-size: 0.8rem; background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px; vertical-align: middle; margin-left: 0.5rem;">Admin</span></a>
+            <nav class="nav-links" id="navLinks">
+                <!-- Injected by JS -->
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div style="padding: 2rem 0; display: flex; justify-content: space-between; align-items: center;">
+            <h1>Manage Courses</h1>
+            <button class="btn btn-primary" onclick="openModal()">+ Create New Course</button>
+        </div>
+
+        <div id="adminGrid" class="grid">
+            <div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: var(--text-light);">
+                Loading courses...
+            </div>
+        </div>
+    </main>
+
+    <!-- Create/Edit Modal -->
+    <div id="courseModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 2rem; border-radius: 1rem; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto;">
+            <h2 id="modalTitle" style="margin-bottom: 1.5rem;">Create Course</h2>
+            <form id="courseForm">
+                <input type="hidden" name="id">
+                <div class="form-group">
+                    <label class="form-label">Title</label>
+                    <input type="text" name="title" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea name="description" class="form-input" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Price ($)</label>
+                    <input type="number" name="price" class="form-input" required min="0" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Image URL</label>
+                    <input type="url" name="imageUrl" class="form-input" required placeholder="https://example.com/image.jpg">
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="button" class="btn btn-outline" style="flex: 1;" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Save Course</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            checkAuth('admin');
+            loadAdminCourses();
+        });
+
+        async function loadAdminCourses() {
+            try {
+                const res = await apiCall('/admin/course/bulk');
+                const grid = document.getElementById('adminGrid');
+                
+                if (res.courses.length === 0) {
+                    grid.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align: center; padding: 4rem 2rem;">
+                            <h3 style="margin-bottom: 1rem;">No courses created yet</h3>
+                            <button class="btn btn-primary" onclick="openModal()">Create Your First Course</button>
+                        </div>
+                    `;
+                    return;
+                }
+
+                grid.innerHTML = res.courses.map(course => `
+                    <div class="card">
+                        <img src="${course.imageUrl}" alt="${course.title}" class="card-img" onerror="this.src='https://placehold.co/600x400?text=Course'">
+                        <div class="card-body">
+                            <h3 class="card-title">${course.title}</h3>
+                            <p class="card-desc">${course.description}</p>
+                            <div class="card-footer">
+                                <span class="price">$${course.price}</span>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-outline" onclick='editCourse(${JSON.stringify(course).replace(/'/g, "&#39;")})'>Edit</button>
+                                    <button class="btn btn-danger" onclick="deleteCourse('${course._id}')">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        function openModal(course = null) {
+            const modal = document.getElementById('courseModal');
+            const form = document.getElementById('courseForm');
+            const title = document.getElementById('modalTitle');
+            
+            modal.style.display = 'flex';
+            
+            if (course) {
+                title.textContent = 'Edit Course';
+                form.id.value = course._id;
+                form.title.value = course.title;
+                form.description.value = course.description;
+                form.price.value = course.price;
+                form.imageUrl.value = course.imageUrl;
+            } else {
+                title.textContent = 'Create Course';
+                form.reset();
+                form.id.value = '';
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('courseModal').style.display = 'none';
+        }
+
+        function editCourse(course) {
+            openModal(course);
+        }
+
+        async function deleteCourse(id) {
+            if (!confirm('Are you sure you want to delete this course?')) return;
+            
+            try {
+                await apiCall(`/admin/course/${id}`, 'DELETE');
+                showToast('Course deleted successfully', 'success');
+                loadAdminCourses();
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        document.getElementById('courseForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            const id = data.id;
+            delete data.id; // Remove ID from payload
+            
+            try {
+                if (id) {
+                    await apiCall(`/admin/course/${id}`, 'PUT', data);
+                    showToast('Course updated successfully', 'success');
+                } else {
+                    await apiCall('/admin/course', 'POST', data);
+                    showToast('Course created successfully', 'success');
+                }
+                closeModal();
+                loadAdminCourses();
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        });
+
+        // Close modal on outside click
+        document.getElementById('courseModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('courseModal')) closeModal();
+        });
+    </script>
+</body>
+</html>

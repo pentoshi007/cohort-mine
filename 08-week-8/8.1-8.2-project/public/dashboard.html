@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Courses - Course Selling App</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="container nav-wrapper">
+            <a href="/" class="logo">CourseApp</a>
+            <nav class="nav-links" id="navLinks">
+                <!-- Injected by JS -->
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div style="padding: 2rem 0; display: flex; justify-content: space-between; align-items: center;">
+            <h1>My Learning</h1>
+            <a href="/" class="btn btn-primary">Browse More Courses</a>
+        </div>
+
+        <div id="purchasedGrid" class="grid">
+            <div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: var(--text-light);">
+                Loading your courses...
+            </div>
+        </div>
+    </main>
+
+    <div id="toast" class="toast"></div>
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            checkAuth('user');
+            
+            try {
+                const res = await apiCall('/user/purchases');
+                const grid = document.getElementById('purchasedGrid');
+                
+                if (res.courses.length === 0) {
+                    grid.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align: center; padding: 4rem 2rem;">
+                            <h3 style="margin-bottom: 1rem;">No courses yet</h3>
+                            <p style="color: var(--text-light); margin-bottom: 2rem;">Start your learning journey today!</p>
+                            <a href="/" class="btn btn-primary">Browse Courses</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                grid.innerHTML = res.courses.map(course => `
+                    <div class="card">
+                        <img src="${course.imageUrl}" alt="${course.title}" class="card-img" onerror="this.src='https://placehold.co/600x400?text=Course'">
+                        <div class="card-body">
+                            <h3 class="card-title">${course.title}</h3>
+                            <p class="card-desc">${course.description}</p>
+                            <div class="card-footer">
+                                <span style="color: var(--success); font-weight: 600; font-size: 0.9rem;">Purchased</span>
+                                <button class="btn btn-outline" onclick="alert('Course content coming soon!')">Start Learning</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        });
+    </script>
+</body>
+</html>

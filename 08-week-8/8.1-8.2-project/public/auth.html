@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Course Selling App</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="container nav-wrapper">
+            <a href="/" class="logo">CourseApp</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="auth-container">
+            <div class="auth-tabs">
+                <div class="auth-tab active" onclick="switchTab('user')">User</div>
+                <div class="auth-tab" onclick="switchTab('admin')">Admin</div>
+            </div>
+
+            <h2 id="formTitle" style="margin-bottom: 1.5rem; text-align: center;">User Login</h2>
+
+            <form id="authForm">
+                <div class="form-group" id="nameFields" style="display: none;">
+                    <div style="display: flex; gap: 1rem;">
+                        <div style="flex: 1;">
+                            <label class="form-label">First Name</label>
+                            <input type="text" name="firstName" class="form-input">
+                        </div>
+                        <div style="flex: 1;">
+                            <label class="form-label">Last Name</label>
+                            <input type="text" name="lastName" class="form-input">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" name="password" class="form-input" required minlength="6">
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Sign In</button>
+            </form>
+
+            <p style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem;">
+                <span id="toggleText">Don't have an account?</span>
+                <a href="#" onclick="toggleMode()" style="color: var(--primary); font-weight: 600;" id="toggleLink">Sign Up</a>
+            </p>
+        </div>
+    </main>
+
+    <div id="toast" class="toast"></div>
+    <script src="script.js"></script>
+    <script>
+        let isLogin = true;
+        let userType = 'user'; // 'user' or 'admin'
+
+        function switchTab(type) {
+            userType = type;
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            updateUI();
+        }
+
+        function toggleMode() {
+            isLogin = !isLogin;
+            updateUI();
+        }
+
+        function updateUI() {
+            const title = `${userType.charAt(0).toUpperCase() + userType.slice(1)} ${isLogin ? 'Login' : 'Signup'}`;
+            document.getElementById('formTitle').textContent = title;
+            document.getElementById('nameFields').style.display = isLogin ? 'none' : 'block';
+            
+            const btn = document.querySelector('button[type="submit"]');
+            btn.textContent = isLogin ? 'Sign In' : 'Create Account';
+            
+            document.getElementById('toggleText').textContent = isLogin ? "Don't have an account?" : "Already have an account?";
+            document.getElementById('toggleLink').textContent = isLogin ? "Sign Up" : "Sign In";
+            
+            // Clear inputs
+            document.querySelectorAll('input').forEach(i => i.value = '');
+        }
+
+        document.getElementById('authForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            const endpoint = `/${userType}/${isLogin ? 'signin' : 'signup'}`;
+            
+            try {
+                const res = await apiCall(endpoint, 'POST', data);
+                
+                if (isLogin) {
+                    localStorage.setItem('token', res.token);
+                    localStorage.setItem('userType', userType);
+                    showToast('Login successful!', 'success');
+                    setTimeout(() => {
+                        window.location.href = userType === 'admin' ? '/admin.html' : '/dashboard.html';
+                    }, 1000);
+                } else {
+                    showToast('Account created! Please login.', 'success');
+                    toggleMode();
+                }
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        });
+    </script>
+</body>
+</html>
