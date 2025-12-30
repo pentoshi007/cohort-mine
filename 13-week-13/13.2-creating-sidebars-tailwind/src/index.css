@@ -1,0 +1,80 @@
+/* 
+  ===========================================
+  TAILWIND CSS v4 CONFIGURATION
+  ===========================================
+  
+  In Tailwind v4, we use @import "tailwindcss" instead of the old @tailwind directives.
+  All custom configuration goes inside the @theme directive.
+  
+  IMPORTANT: In Tailwind v4, avoid writing vanilla CSS.
+  Instead, use @theme for tokens and @layer for extending utilities.
+*/
+@import "tailwindcss";
+
+/* 
+  ===========================================
+  CUSTOM THEME TOKENS
+  ===========================================
+  
+  @theme is where we define our design tokens.
+  These automatically become utility classes!
+  
+  Example: --color-primary becomes bg-primary, text-primary, etc.
+*/
+@theme {
+  /* ========== LIGHT MODE COLORS ========== */
+  
+  /* Primary brand colors */
+  --color-primary: #19406a;
+  --color-primary-dark: #002b5b;
+  --color-secondary: #36c6c0;
+  
+  /* Sidebar colors */
+  --color-sidebar: #1e293b;
+  --color-sidebar-hover: #334155;
+  --color-sidebar-active: #0f172a;
+  
+  /* Content area colors */
+  --color-content-bg: #f8fafc;
+  --color-card-bg: #ffffff;
+  
+  /* Text colors */
+  --color-text-primary: #1e293b;
+  --color-text-secondary: #64748b;
+  --color-text-muted: #94a3b8;
+  
+  /* Border & divider colors */
+  --color-border: #e2e8f0;
+  
+  /* Accent colors */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --color-info: #3b82f6;
+  
+  /* Action button colors */
+  --color-action-btn: #14b8a6;
+  --color-action-btn-hover: #0d9488;
+  
+  /* ========== SIDEBAR WIDTH TOKENS ========== */
+  /* These create utility classes like w-sidebar-collapsed, w-sidebar-expanded */
+  --width-sidebar-collapsed: 5rem;   /* 80px - icons only */
+  --width-sidebar-expanded: 16rem;   /* 256px - with text */
+}
+
+/* 
+  ===========================================
+  DARK MODE COLOR OVERRIDES
+  ===========================================
+  
+  In Tailwind v4, we can use @variant to define dark mode overrides.
+  The .dark class on <html> triggers these.
+*/
+.dark {
+  --color-content-bg: #0f172a;
+  --color-card-bg: #1e293b;
+  --color-text-primary: #f1f5f9;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted: #64748b;
+  --color-border: #334155;
+}

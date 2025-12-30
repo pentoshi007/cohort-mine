@@ -47,7 +47,7 @@ flowchart LR
     A["📝 .ts File<br/>(TypeScript)"] -->|"tsc compiles"| B["⚙️ Type Checking"]
     B -->|"Types erased"| C["📄 .js File<br/>(JavaScript)"]
     C -->|"node runs"| D["🚀 Runtime"]
-    
+
     style A fill:#2563eb,stroke:#60a5fa,color:#ffffff
     style B fill:#7c3aed,stroke:#a78bfa,color:#ffffff
     style C fill:#059669,stroke:#34d399,color:#ffffff
@@ -63,24 +63,25 @@ Type annotations tell TypeScript what type a variable should hold.
 ### Primitive Types
 
 ```typescript
-let name: string = "John";        // String
-let age: number = 25;             // Number
-let isActive: boolean = true;     // Boolean
-let data: null = null;            // Null
+let name: string = "John"; // String
+let age: number = 25; // Number
+let isActive: boolean = true; // Boolean
+let data: null = null; // Null
 let value: undefined = undefined; // Undefined
 ```
 
 ### Key Insight 💡
+
 > Type annotations use a **colon (`:`)** after the variable name. TypeScript will throw an error if you try to assign a value of a different type.
 
 ### Special Types
 
-| Type | Description | When to Use |
-|------|-------------|-------------|
-| `any` | Disables type checking | Avoid! Only for migration |
-| `unknown` | Type-safe version of `any` | When type is truly unknown |
-| `void` | No return value | Functions that don't return |
-| `never` | Function never returns | Errors, infinite loops |
+| Type      | Description                | When to Use                 |
+| --------- | -------------------------- | --------------------------- |
+| `any`     | Disables type checking     | Avoid! Only for migration   |
+| `unknown` | Type-safe version of `any` | When type is truly unknown  |
+| `void`    | No return value            | Functions that don't return |
+| `never`   | Function never returns     | Errors, infinite loops      |
 
 ---
 
@@ -112,12 +113,13 @@ function greet(name: unknown): string {
   return "Hello, unknown!";
 }
 
-console.log(greet("John"));  // "Hello, John!"
-console.log(greet(4));       // "Hello, 4!"
-console.log(greet(true));    // "Hello, unknown!"
+console.log(greet("John")); // "Hello, John!"
+console.log(greet(4)); // "Hello, 4!"
+console.log(greet(true)); // "Hello, unknown!"
 ```
 
 ### Key Insight 💡
+
 > Using `unknown` instead of `any` forces you to **narrow the type** before using it. This is safer because TypeScript ensures you handle all cases.
 
 ### Function Type Flow
@@ -129,7 +131,7 @@ flowchart TD
     B -->|"string"| C["Return: Hello, name!"]
     B -->|"number"| D["Return: Hello, number!"]
     B -->|"other"| E["Return: Hello, unknown!"]
-    
+
     style A fill:#2563eb,stroke:#60a5fa,color:#ffffff
     style B fill:#7c3aed,stroke:#a78bfa,color:#ffffff
     style C fill:#059669,stroke:#34d399,color:#ffffff
@@ -205,6 +207,7 @@ const ta: TeachingAssistant = {
 ```
 
 ### Key Insight 💡
+
 > The `&` operator creates an **intersection type** - the resulting type has ALL properties from BOTH types. This is unique to `type` aliases!
 
 ### Union Types (Either/Or)
@@ -288,14 +291,14 @@ Both can define object shapes, but they have key differences:
 
 ### Comparison Table
 
-| Feature | Type | Interface |
-|---------|------|-----------|
-| Object shapes | ✅ Yes | ✅ Yes |
-| Union types | ✅ Yes (`\|`) | ❌ No |
-| Intersection | ✅ Yes (`&`) | ✅ Yes (`extends`) |
-| Declaration merging | ❌ No | ✅ Yes |
-| Computed properties | ✅ Yes | ❌ No |
-| Extends classes | ❌ No | ✅ Yes |
+| Feature             | Type          | Interface          |
+| ------------------- | ------------- | ------------------ |
+| Object shapes       | ✅ Yes        | ✅ Yes             |
+| Union types         | ✅ Yes (`\|`) | ❌ No              |
+| Intersection        | ✅ Yes (`&`)  | ✅ Yes (`extends`) |
+| Declaration merging | ❌ No         | ✅ Yes             |
+| Computed properties | ✅ Yes        | ❌ No              |
+| Extends classes     | ❌ No         | ✅ Yes             |
 
 ### When to Use What
 
@@ -308,7 +311,7 @@ flowchart TD
     B -->|"Object for class"| E["Use INTERFACE<br/>interface IUser { }"]
     B -->|"Need merging"| F["Use INTERFACE<br/>Can extend later"]
     B -->|"Simple object"| G["Either works!<br/>Prefer interface"]
-    
+
     style A fill:#2563eb,stroke:#60a5fa,color:#ffffff
     style B fill:#7c3aed,stroke:#a78bfa,color:#ffffff
     style C fill:#059669,stroke:#34d399,color:#ffffff
@@ -342,35 +345,38 @@ interface ICalculator {
 class Calculator implements ICalculator {
   // Using 'public' in constructor auto-creates and assigns the property
   constructor(public version: string = "1.0.0") {}
-  
+
   add(a: number, b: number): number {
     return a + b;
   }
-  
+
   subtract(a: number, b: number): number {
     return a - b;
   }
-  
+
   multiply(a: number, b: number): number {
     return a * b;
   }
-  
+
   divide(a: number, b: number): number {
     return a / b;
   }
 }
 
 const calc = new Calculator("2.0.0");
-console.log(calc.add(1, 2));      // 3
-console.log(calc.version);        // "2.0.0"
+console.log(calc.add(1, 2)); // 3
+console.log(calc.version); // "2.0.0"
 ```
 
 ### Key Insight 💡
+
 > The `public` keyword in constructor parameters is a **shorthand** that:
+>
 > 1. Declares the property
 > 2. Assigns the parameter value to it
-> 
+>
 > `constructor(public version: string)` is equivalent to:
+>
 > ```typescript
 > version: string;
 > constructor(version: string) {
@@ -379,10 +385,12 @@ console.log(calc.version);        // "2.0.0"
 > ```
 
 ### Syntax Trick 🔧
+
 > Interface methods can be defined two ways:
+>
 > - Method syntax: `add(a: number, b: number): number`
 > - Arrow syntax: `divide: (a: number, b: number) => number`
-> 
+>
 > Both work the same way when implementing!
 
 ---
@@ -390,6 +398,7 @@ console.log(calc.version);        // "2.0.0"
 ## 8. Abstract Classes
 
 Abstract classes are **blueprints** that:
+
 - ❌ Cannot be instantiated directly
 - ✅ Can have abstract methods (must be implemented by child)
 - ✅ Can have concrete methods (shared implementation)
@@ -399,7 +408,7 @@ Abstract classes are **blueprints** that:
 ```typescript
 abstract class User {
   name: string;
-  
+
   constructor(name: string) {
     this.name = name;
   }
@@ -426,7 +435,7 @@ class Employee extends User {
 
 const employee = new Employee("John");
 console.log(employee.greet()); // "hi John"
-employee.hello();              // "hi there" (inherited)
+employee.hello(); // "hi there" (inherited)
 
 // const user = new User("Test"); // ❌ Error: Cannot instantiate abstract class
 ```
@@ -443,14 +452,14 @@ classDiagram
         +greet()* string
         +hello() void
     }
-    
+
     class Employee {
         +constructor(name)
         +greet() string
     }
-    
+
     User <|-- Employee : extends
-    
+
     note for User "Cannot instantiate directly\nAbstract methods marked with *"
     note for Employee "Must implement greet()\nInherits hello()"
 ```
@@ -490,7 +499,9 @@ class CardPayment extends PaymentProcessor {
 ```
 
 ### Key Insight 💡
+
 > Abstract classes are perfect when you want to:
+>
 > - **Share common code** between related classes
 > - **Enforce a contract** (abstract methods)
 > - **Prevent direct instantiation** of the base class
@@ -510,15 +521,15 @@ flowchart TB
         TYPE["TYPE<br/>• Union/Intersection<br/>• Function types<br/>• Flexible"]
         INTERFACE["INTERFACE<br/>• Object contracts<br/>• Declaration merging<br/>• OOP friendly"]
     end
-    
+
     subgraph RUNTIME["Exists at Runtime (Real JS Code)"]
         ABSTRACT["ABSTRACT CLASS<br/>• Shared implementation<br/>• Constructor logic<br/>• instanceof works"]
     end
-    
+
     TYPE -.->|"Similar for objects"| INTERFACE
     INTERFACE -->|"implements"| CLASS["Regular Class"]
     ABSTRACT -->|"extends"| CLASS
-    
+
     style TYPE fill:#2563eb,stroke:#60a5fa,color:#ffffff
     style INTERFACE fill:#7c3aed,stroke:#a78bfa,color:#ffffff
     style ABSTRACT fill:#059669,stroke:#34d399,color:#ffffff
@@ -529,17 +540,17 @@ flowchart TB
 
 ### Comparison Table
 
-| Feature | Type | Interface | Abstract Class |
-|---------|------|-----------|----------------|
-| **Purpose** | Define data shapes | Define contracts | Blueprint + shared code |
-| **Instantiable?** | No (type only) | No (type only) | No (must extend) |
-| **Runtime existence?** | ❌ No | ❌ No | ✅ Yes (JS class) |
-| **Can have implementation?** | ❌ No | ❌ No | ✅ Yes |
-| **Union types?** | ✅ Yes | ❌ No | ❌ No |
-| **Declaration merging?** | ❌ No | ✅ Yes | ❌ No |
-| **Constructor?** | ❌ No | ❌ No | ✅ Yes |
-| **Access modifiers?** | ❌ No | ❌ No | ✅ Yes |
-| **`instanceof` check?** | ❌ No | ❌ No | ✅ Yes |
+| Feature                      | Type               | Interface        | Abstract Class          |
+| ---------------------------- | ------------------ | ---------------- | ----------------------- |
+| **Purpose**                  | Define data shapes | Define contracts | Blueprint + shared code |
+| **Instantiable?**            | No (type only)     | No (type only)   | No (must extend)        |
+| **Runtime existence?**       | ❌ No              | ❌ No            | ✅ Yes (JS class)       |
+| **Can have implementation?** | ❌ No              | ❌ No            | ✅ Yes                  |
+| **Union types?**             | ✅ Yes             | ❌ No            | ❌ No                   |
+| **Declaration merging?**     | ❌ No              | ✅ Yes           | ❌ No                   |
+| **Constructor?**             | ❌ No              | ❌ No            | ✅ Yes                  |
+| **Access modifiers?**        | ❌ No              | ❌ No            | ✅ Yes                  |
+| **`instanceof` check?**      | ❌ No              | ❌ No            | ✅ Yes                  |
 
 ### Quick Decision Tree
 
@@ -558,9 +569,9 @@ Need runtime type check? → ABSTRACT CLASS
 
 ```typescript
 // TYPE - Compile-time only, most flexible
-type Status = "active" | "inactive";           // Union - only TYPE can do!
-type Callback = (data: string) => void;        // Function signature
-type Combined = User & { role: string };       // Intersection
+type Status = "active" | "inactive"; // Union - only TYPE can do!
+type Callback = (data: string) => void; // Function signature
+type Combined = User & { role: string }; // Intersection
 
 // INTERFACE - Compile-time only, OOP-friendly
 interface IUser {
@@ -575,10 +586,11 @@ interface IUser {
 // ABSTRACT CLASS - Exists at runtime, has implementation
 abstract class BaseUser {
   constructor(public name: string) {} // Has constructor!
-  
-  abstract validate(): boolean;       // Must implement
-  
-  getInfo(): string {                 // Shared implementation
+
+  abstract validate(): boolean; // Must implement
+
+  getInfo(): string {
+    // Shared implementation
     return `User: ${this.name}`;
   }
 }
@@ -675,19 +687,19 @@ flowchart LR
     subgraph Original["Original Type"]
         USER["User<br/>{id, name, age, email, password}"]
     end
-    
+
     subgraph Transformed["Transformed Types"]
         PICK["Pick&lt;User, 'name' \| 'age'&gt;<br/>{name, age}"]
         PARTIAL["Partial&lt;User&gt;<br/>{id?, name?, age?, ...}"]
         OMIT["Omit&lt;User, 'password'&gt;<br/>{id, name, age, email}"]
         REQUIRED["Required&lt;User&gt;<br/>{id, name, age, email, password}<br/>(all required)"]
     end
-    
+
     USER --> PICK
     USER --> PARTIAL
     USER --> OMIT
     USER --> REQUIRED
-    
+
     style USER fill:#2563eb,stroke:#60a5fa,color:#ffffff
     style PICK fill:#059669,stroke:#34d399,color:#ffffff
     style PARTIAL fill:#7c3aed,stroke:#a78bfa,color:#ffffff
@@ -709,7 +721,7 @@ flowchart LR
     A["API Request<br/>(unknown data)"] --> B{"Zod Validation"}
     B -->|"Valid"| C["✅ Type-safe data"]
     B -->|"Invalid"| D["❌ Error response"]
-    
+
     style A fill:#2563eb,stroke:#60a5fa,color:#ffffff
     style B fill:#7c3aed,stroke:#a78bfa,color:#ffffff
     style C fill:#059669,stroke:#34d399,color:#ffffff
@@ -742,21 +754,23 @@ const app = express();
 app.put("/user", (req, res) => {
   // Runtime validation
   const result = userProfileSchema.safeParse(req.body);
-  
+
   if (!result.success) {
     res.status(411).json({ errors: result.error.errors });
     return;
   }
-  
+
   // result.data is now type-safe!
   const user: UserProfile = result.data;
-  
+
   res.json({ message: "User updated" });
 });
 ```
 
 ### Key Insight 💡
+
 > `z.infer<typeof schema>` extracts the TypeScript type from a Zod schema. This means you:
+>
 > - Define validation **once** (Zod schema)
 > - Get both **runtime validation** AND **compile-time types**
 > - No need to maintain separate type definitions!
@@ -769,13 +783,13 @@ The `tsconfig.json` file controls how TypeScript compiles your code.
 
 ### Essential Options
 
-| Option | Value | Purpose |
-|--------|-------|---------|
-| `target` | `"esnext"` | Output JS version (latest) |
-| `module` | `"nodenext"` | Module system (modern Node.js) |
-| `strict` | `true` | Enable all strict checks |
-| `outDir` | `"./dist"` | Output directory |
-| `skipLibCheck` | `true` | Skip checking .d.ts files (faster) |
+| Option         | Value        | Purpose                            |
+| -------------- | ------------ | ---------------------------------- |
+| `target`       | `"esnext"`   | Output JS version (latest)         |
+| `module`       | `"nodenext"` | Module system (modern Node.js)     |
+| `strict`       | `true`       | Enable all strict checks           |
+| `outDir`       | `"./dist"`   | Output directory                   |
+| `skipLibCheck` | `true`       | Skip checking .d.ts files (faster) |
 
 ### Recommended Configuration
 
@@ -786,20 +800,20 @@ The `tsconfig.json` file controls how TypeScript compiles your code.
     "target": "esnext",
     "module": "nodenext",
     "outDir": "./dist",
-    
+
     // Strict Type Checking (ALWAYS enable these!)
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
-    
+
     // Modern Tooling Support
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
     "moduleDetection": "force",
-    
+
     // Performance
     "skipLibCheck": true,
-    
+
     // React (if using)
     "jsx": "react-jsx"
   }
@@ -808,12 +822,12 @@ The `tsconfig.json` file controls how TypeScript compiles your code.
 
 ### Common Issues & Solutions
 
-| Issue | Solution |
-|-------|----------|
+| Issue                                          | Solution                                                        |
+| ---------------------------------------------- | --------------------------------------------------------------- |
 | `Cannot use import statement outside a module` | Set `"module": "nodenext"` + `"type": "module"` in package.json |
-| `Cannot find name 'process'` | Add `"types": ["node"]` + install `@types/node` |
-| `Cannot re-export a type` | Use `export type { MyType }` |
-| Slow compilation | Enable `skipLibCheck: true` |
+| `Cannot find name 'process'`                   | Add `"types": ["node"]` + install `@types/node`                 |
+| `Cannot re-export a type`                      | Use `export type { MyType }`                                    |
+| Slow compilation                               | Enable `skipLibCheck: true`                                     |
 
 ---
 
@@ -880,4 +894,3 @@ The `tsconfig.json` file controls how TypeScript compiles your code.
 
 > **📚 This guide covers Week 14 of the cohort curriculum.**  
 > **Last updated:** December 2024
-
