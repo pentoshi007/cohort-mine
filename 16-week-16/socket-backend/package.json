@@ -1,0 +1,22 @@
+{
+  "name": "16-week-16",
+  "version": "1.0.0",
+  "description": "",
+  "main": "16.1-websockets.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "concurrently \"tsc -w\" \"nodemon ./dist/16.1-websockets.js\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@types/ws": "^8.18.1",
+    "ws": "^8.19.0"
+  }
+}

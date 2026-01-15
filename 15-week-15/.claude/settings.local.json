@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build)",
+      "Bash(npm install axios react-router-dom)",
+      "Bash(npm install -D @types/react-router-dom)",
+      "Bash(npm install cors)",
+      "Bash(npm install -D @types/cors)"
+    ]
+  }
+}
