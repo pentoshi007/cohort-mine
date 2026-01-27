@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Example models
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  email     String?  @unique
+  password  String
+  createdAt DateTime @default(now()) @map("created_at")
+  todos     Todo[]
+
+  @@map("users")
+}
+
+// Todo model represents a task/todo item in the database
+model Todo {
+  // Primary key field with auto-incrementing integer
+  id Int @id @default(autoincrement())
+
+  // Required string field for the todo title
+  title String
+
+  // Optional string field (String?) for additional details
+  description String?
+
+  // Boolean field with default value of false
+  done Boolean @default(false)
+
+  // Timestamp field that defaults to current time
+  // @map("created_at") - FIELD-LEVEL mapping: renames THIS FIELD in the database
+  // In Prisma code you use: createdAt (camelCase)
+  // In database column name: created_at (snake_case)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Foreign key field referencing the User model
+  // @map("user_id") - FIELD-LEVEL mapping: renames THIS FIELD in the database
+  // In Prisma code you use: userId (camelCase)
+  // In database column name: user_id (snake_case)
+  userId Int @map("user_id")
+
+  // Relation field defining the relationship to User model
+  // fields: [userId] - the foreign key field in this model
+  // references: [id] - the field in the User model being referenced
+  // Relation field - NOT a database column!
+  // The keyword "user" here is just a field name you choose (like a variable name)
+  // You could call it "author", "owner", "creator" - anything that makes sense
+  // 
+  // Significance of this field:
+  // 1. It's a virtual/navigation property - doesn't exist in the database
+  // 2. It enables you to access the related User object in your code
+  // 3. Example usage in code:
+  //    const todo = await prisma.todo.findUnique({ 
+  //      where: { id: 1 }, 
+  //      include: { user: true }  // <-- using the "user" field name here
+  //    })
+  //    console.log(todo.user.username)  // <-- accessing related User via "user"
+  //
+  // The @relation() tells Prisma HOW to join:
+  // - fields: [userId] = use the userId column from THIS table (todos)
+  // - references: [id] = match it with the id column from the User table (users)
+  user User @relation(fields: [userId], references: [id])
+
+  // @@map("todos") - MODEL-LEVEL mapping: renames the ENTIRE TABLE in the database
+  // In Prisma code you use: Todo (model name)
+  // In database table name: todos (lowercase plural)
+  // Summary: @map = rename a field/column, @@map = rename the whole table
+  @@map("todos")
+}
