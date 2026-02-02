@@ -1,0 +1,7 @@
+{
+  "extends": "../../packages/typescript-config/backends.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist"
+  }
+}
