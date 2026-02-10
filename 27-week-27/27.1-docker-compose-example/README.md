@@ -1,54 +1,65 @@
-# 27.1 Docker Compose Example (Bun + Prisma + Postgres)
+# 27.1 Docker Compose Example - Beginner Step-by-Step Guide
 
-This README is a full start-to-end execution guide for this project, including:
+This README is for first-time learners.
 
-- theory context (what/why)
-- complete setup commands
-- Prisma lifecycle commands
-- API testing commands
-- Docker and Compose operations
+Goal: run a simple Users API using:
 
----
+- Bun + Express (app)
+- Prisma (ORM)
+- PostgreSQL (database)
+- Docker / Docker Compose (containers)
 
-## 1) What this project is
-
-This project is a simple Users API:
-
-- Runtime: Bun + Express
-- ORM: Prisma 7
-- DB: PostgreSQL
-- Containerization: Docker + Docker Compose
-
-It exposes:
-
-- `GET /health`
-- `GET /users`
-- `POST /users`
-- `DELETE /users/:id`
+If you are new, follow commands in order. Do not skip steps.
 
 ---
 
-## 2) Project file map (Docker-relevant)
+## 1) What this project does
 
-- `DockerFile`: builds app image and runs `prisma migrate deploy` at startup.
-- `docker-compose.yml`: runs `postgres` + `app` together with healthcheck dependency.
-- `.env.example`: local-run env template (`DATABASE_URL`, `PORT`).
-- `prisma.config.ts`: Prisma config, datasource URL is read from env.
-- `prisma/schema.prisma`: Prisma model definition (`User` table).
-- `prisma/migrations/*`: versioned SQL migrations (source of truth for deploy).
-- `src/index.ts`: API server, Prisma client/adapter wiring, endpoints.
-- `package.json`: scripts for local run and Prisma commands.
+API endpoints:
+
+- `GET /health` -> checks app + DB connection
+- `GET /users` -> list users
+- `POST /users` -> create user
+- `DELETE /users/:id` -> delete user
 
 ---
 
-## 3) Prerequisites
+## 2) Important files and why they exist
 
-Install:
+- `docker-compose.yml`
+  - starts `postgres` and `app` together.
 
-- Docker Desktop (Compose plugin included)
+- `DockerFile`
+  - defines how app image is built.
+
+- `.env.example`
+  - sample environment values for local run.
+
+- `prisma/schema.prisma`
+  - data model (`User` table).
+
+- `prisma/migrations/*`
+  - SQL migration history.
+
+- `prisma.config.ts`
+  - Prisma config reads `DATABASE_URL`.
+
+- `src/index.ts`
+  - Express API code and Prisma client setup.
+
+- `package.json`
+  - scripts like `dev`, `prisma:generate`, `prisma:migrate`.
+
+---
+
+## 3) Prerequisites (install first)
+
+You need:
+
+- Docker Desktop
 - Bun
 
-Verify:
+Check installation:
 
 ```bash
 docker --version
@@ -58,36 +69,46 @@ bun --version
 
 ---
 
-## 4) Workflow A: Local app + Postgres in Docker (step-by-step)
+## 4) Method A (Best for learning): app on host, DB in Docker
 
-Use this when learning/debugging and you want Bun app on host.
+This method is easiest for beginners because you can run app directly with Bun and only DB in container.
 
-### Step A1: Go to project folder
+### Step A1: go to folder
 
 ```bash
 cd 27-week-27/27.1-docker-compose-example
 ```
 
-### Step A2: Install dependencies
+### Step A2: install dependencies
 
 ```bash
 bun install
 ```
 
-### Step A3: Setup env file
+What it does:
+
+- installs all packages from `package.json`
+- uses versions locked in `bun.lock`
+
+### Step A3: create `.env`
 
 ```bash
 cp .env.example .env
 ```
 
-Default `.env` values:
+Expected `.env`:
 
 ```env
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/usersdb?schema=public"
 PORT=3000
 ```
 
-### Step A4: Start Postgres container
+Meaning:
+
+- app connects to DB at `localhost:5432`
+- app runs on port `3000`
+
+### Step A4: start PostgreSQL container
 
 ```bash
 docker rm -f pg-users 2>/dev/null || true
@@ -102,35 +123,37 @@ docker run -d \
   postgres:16-alpine
 ```
 
-Why this command matters:
+Command breakdown:
 
-- creates DB `usersdb`
-- exposes DB on host `localhost:5432`
-- persists data via volume `pg-users-data`
+- `docker rm -f pg-users` removes old container if it exists.
+- `docker run` starts a new container.
+- `-d` runs it in background.
+- `--name pg-users` names the container.
+- `-e` options set DB username/password/dbname.
+- `-p 5432:5432` maps host port to container DB port.
+- `-v pg-users-data:/var/lib/postgresql/data` keeps DB data in volume.
 
-### Step A5: Prisma generate + migrate
+### Step A5: setup Prisma
 
 ```bash
 bun run prisma:generate
 bun run prisma:migrate
 ```
 
-What happens:
+What these do:
 
-- Prisma client is generated for app usage.
-- Initial migration creates table `User` and unique index on `username`.
+- `prisma:generate` creates Prisma client code.
+- `prisma:migrate` creates/applies migration (dev mode).
 
-### Step A6: Start API locally
+### Step A6: run app
 
 ```bash
 bun run dev
 ```
 
-Expected startup:
+You should see API started on `http://localhost:3000`.
 
-- API running at `http://localhost:3000`
-
-### Step A7: Test APIs
+### Step A7: test APIs
 
 ```bash
 curl http://localhost:3000/health
@@ -141,40 +164,43 @@ curl -X DELETE http://localhost:3000/users/<USER_ID>
 
 ---
 
-## 5) Workflow B: Full stack with Docker Compose (recommended daily run)
+## 5) Method B (Full Docker): app + DB with Compose
 
-Use this when you want app + DB both containerized.
+Use this when you want both services containerized.
 
-### Step B1: Go to project folder
+### Step B1: go to folder
 
 ```bash
 cd 27-week-27/27.1-docker-compose-example
 ```
 
-### Step B2: Start stack
+### Step B2: start full stack
 
 ```bash
 docker compose up --build -d
 ```
 
-What Compose does here:
+Breakdown:
 
-- starts `postgres` service with persistent volume
-- builds app image from `DockerFile`
-- waits for DB healthcheck
-- starts app service with:
-  - `DATABASE_URL=postgresql://postgres:postgres@postgres:5432/usersdb?schema=public`
-  - `PORT=3000`
-- runs `prisma migrate deploy` in app container startup command
+- `docker compose up` starts services from `docker-compose.yml`
+- `--build` rebuilds app image before start
+- `-d` runs in background
 
-### Step B3: Verify services
+What happens internally:
+
+- `postgres` container starts
+- healthcheck waits until DB is ready
+- `app` container starts
+- app runs `bunx prisma migrate deploy` then starts server
+
+### Step B3: check running status
 
 ```bash
 docker compose ps
 docker compose logs -f
 ```
 
-### Step B4: Test APIs
+### Step B4: test APIs
 
 ```bash
 curl http://localhost:3000/health
@@ -183,14 +209,13 @@ curl http://localhost:3000/users
 curl -X DELETE http://localhost:3000/users/<USER_ID>
 ```
 
-### Step B5: Stop stack
+### Step B5: stop services
 
 ```bash
 docker compose down
 ```
 
-Keep DB data (default): yes  
-Delete DB data too:
+Delete DB volume also (danger: data loss):
 
 ```bash
 docker compose down -v
@@ -198,92 +223,112 @@ docker compose down -v
 
 ---
 
-## 6) Prisma command guide (what to use when)
+## 6) Networking explained simply
 
-- `bun run prisma:generate`
-  - regenerate Prisma client after schema changes.
-- `bun run prisma:migrate` (`prisma migrate dev --name init`)
-  - local development migration creation/apply flow.
-- `bunx prisma migrate deploy`
-  - apply existing migration files in container/deploy environments.
-- `bun run prisma:studio`
-  - open Prisma Studio for DB browsing.
+In Compose, app connects using:
+
+`postgresql://postgres:postgres@postgres:5432/usersdb?schema=public`
+
+Why host is `postgres`:
+
+- `postgres` is service name in compose file.
+- Docker gives DNS entry for service names in same network.
 
 Important:
 
-- local development uses `migrate dev`.
-- container startup uses `migrate deploy`.
+- `localhost` inside container means that same container only.
 
 ---
 
-## 7) Docker operations for this project
+## 7) Volumes explained simply
 
-### Rebuild app image manually
+DB writes files to `/var/lib/postgresql/data` in container.
+
+Compose maps that path to named volume `pg-users-data`.
+
+Result:
+
+- restart/remove container -> data can still survive
+- remove volume -> data gone
+
+---
+
+## 8) Prisma commands quick guide
+
+- `bun run prisma:generate`
+  - regenerate Prisma client.
+
+- `bun run prisma:migrate`
+  - dev migration command (create/apply migration in local development).
+
+- `bunx prisma migrate deploy`
+  - apply already existing migration files (used at startup in container).
+
+- `bun run prisma:studio`
+  - open Prisma Studio UI.
+
+---
+
+## 9) Useful debug commands
+
+### Check containers
 
 ```bash
-docker build -f DockerFile -t user-project:test .
+docker ps
+docker compose ps
 ```
 
-### Run app image manually (when DB runs on host-mapped port)
+### Check logs
 
 ```bash
-docker run -d \
-  --name user-project-api \
-  -p 3000:3000 \
-  -e DATABASE_URL="postgresql://postgres:postgres@host.docker.internal:5432/usersdb?schema=public" \
-  -e PORT=3000 \
-  user-project:test
+docker compose logs -f app
+docker compose logs -f postgres
 ```
 
-### Inspect DB from container
+### Check DB table/data
 
 ```bash
 docker exec -it pg-users psql -U postgres -d usersdb -c '\dt'
 docker exec -it pg-users psql -U postgres -d usersdb -c 'SELECT * FROM "User";'
 ```
 
-### Useful logs
+---
 
-```bash
-docker logs -f user-project-api
-docker compose logs -f app
-docker compose logs -f postgres
-```
+## 10) Common errors and fixes
+
+- Error: `DATABASE_URL is required`
+  - set `.env` for local run or env in container config.
+
+- App cannot connect to DB
+  - check DB container is running.
+  - check hostname in URL:
+    - local app: `localhost`
+    - compose app: `postgres`
+
+- `username already exists`
+  - username is unique; use different value.
+
+- Port already in use
+  - free port `3000`/`5432` or change mapping.
 
 ---
 
-## 8) Troubleshooting
-
-- `DATABASE_URL is required`:
-  - set `.env` for local run, or pass env in `docker run`, or use compose env.
-- App cannot connect to DB:
-  - confirm postgres is running and healthy.
-  - confirm host in URL (`localhost` for host app, `postgres` for compose app).
-- `username already exists` on POST:
-  - `username` has unique index; use a new value.
-- `user not found` on DELETE:
-  - confirm `id` from `GET /users`.
-- Port in use (`3000` or `5432`):
-  - stop conflicting process/container or map different host port.
-
----
-
-## 9) Full cleanup/reset commands
+## 11) Cleanup and reset
 
 Stop and remove containers:
 
 ```bash
-docker rm -f user-project-api pg-users 2>/dev/null || true
+docker rm -f pg-users user-project-api 2>/dev/null || true
 docker compose down 2>/dev/null || true
 ```
 
-Delete persistent DB volume (destructive):
+Remove DB volume (danger: delete data):
 
 ```bash
 docker volume rm pg-users-data
 ```
 
-System cleanup (optional):
+Optional Docker cleanup:
 
 ```bash
 docker system prune -f
@@ -291,9 +336,9 @@ docker system prune -f
 
 ---
 
-## 10) One-shot quick start blocks
+## 12) One-command blocks (copy-paste)
 
-### Local app + Docker DB quick start
+### Local app + docker DB
 
 ```bash
 cd 27-week-27/27.1-docker-compose-example
@@ -306,54 +351,10 @@ bun run prisma:migrate
 bun run dev
 ```
 
-### Compose quick start
+### Full compose stack
 
 ```bash
 cd 27-week-27/27.1-docker-compose-example
 docker compose up --build -d
 curl http://localhost:3000/health
 ```
-# 27.1 Docker + Prisma + Postgres (No Compose)
-
-Uses latest Prisma (v7) setup.
-
-- `prisma.config.ts` holds datasource URL
-- `schema.prisma` keeps only datasource provider (no `url = env(...)`)
-- App uses `@prisma/adapter-pg` + `pg` with `PrismaClient({ adapter })`
-
-## 1) Start Postgres with Docker
-
-```bash
-docker rm -f pg-users 2>/dev/null || true
-
-docker run -d \
-  --name pg-users \
-  -e POSTGRES_USER=postgres \
-  -e POSTGRES_PASSWORD=postgres \
-  -e POSTGRES_DB=usersdb \
-  -p 5432:5432 \
-  -v pg-users-data:/var/lib/postgresql/data \
-  postgres:16-alpine
-```
-
-## 2) Install deps and env
-
-```bash
-bun install
-cp .env.example .env
-```
-
-## 3) Prisma setup
-
-```bash
-bun run prisma:generate
-bun run prisma:migrate
-```
-
-## 4) Run API
-
-```bash
-bun run dev
-```
-
-API: `http://localhost:3000`
