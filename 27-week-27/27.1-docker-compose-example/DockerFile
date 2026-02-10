@@ -1,0 +1,21 @@
+FROM oven/bun:1-alpine
+
+WORKDIR /app
+
+# Install dependencies first (better Docker cache reuse)
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile
+
+# Copy application source
+COPY prisma ./prisma
+COPY prisma.config.ts ./
+COPY src ./src
+COPY tsconfig.json ./
+
+# Generate Prisma client at build time
+RUN bunx prisma generate
+
+EXPOSE 3000
+
+# Apply migrations on startup, then run API
+CMD ["sh", "-c", "bunx prisma migrate deploy && bun src/index.ts"]
