@@ -1,0 +1,22 @@
+# ─────────────────────────────────────────────────────────
+# docker-compose.yml — Local development stack
+# ─────────────────────────────────────────────────────────
+# Run: docker compose up --build
+# This builds the app image and starts it with your .env file.
+# ─────────────────────────────────────────────────────────
+
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000" # Host port 3000 → Container port 3000
+    env_file:
+      - .env # Load all vars from .env into the container
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped # Auto-restart if the container crashes
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

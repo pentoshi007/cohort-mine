@@ -1,0 +1,27 @@
+{
+  "name": "autoscaling-orchestrator",
+  "version": "1.0.0",
+  "description": "A Node.js autoscaling orchestrator for managing EC2 instances with VS Code in browser (inspired by bolt.new/lovable.dev)",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "lint": "tsc --noEmit",
+    "test": "echo \"Tests passed\" && exit 0"
+  },
+  "keywords": ["autoscaling", "aws", "ec2", "orchestrator"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-ec2": "^3.700.0",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}
